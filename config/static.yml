@@ -1,0 +1,32 @@
+global:
+  sendAnonymousUsage: false
+
+api:
+  dashboard: true
+  insecure: true
+
+tracing:
+  jaeger:
+    samplingServerURL: http://jaeger:5778/sampling
+    collector:
+      endpoint: http://jaeger:14268/api/traces?format=jaeger.thrift
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    watch: true
+    exposedByDefault: false
+
+  file:
+    filename: /etc/traefik/dynamic.yml
+    watch: true
+
+log:
+  level: INFO
+  format: common
+
+entryPoints:
+  http:
+    address: ":80"
+  https:
+    address: ":443"

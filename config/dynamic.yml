@@ -1,0 +1,10 @@
+http:
+  routers:
+    traefik:
+      rule: "Host(`traefik.test`)"
+      service: "api@internal"
+
+tls:
+  certificates:
+    - certFile: "/etc/certs/cert.crt"
+      keyFile: "/etc/certs/cert.key"

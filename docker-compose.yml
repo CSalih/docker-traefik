@@ -4,18 +4,12 @@ services:
   traefik:
     image: traefik:v2.6
     container_name: traefik_proxy
-    restart: always
-    command:
-      - "--log.level=INFO"
-      - "--api.dashboard=true"
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--tracing.jaeger=true"
-      - "--tracing.jaeger.samplingServerURL=http://jaeger:5778/sampling"
-      - "--tracing.jaeger.collector.endpoint=http://jaeger:14268/api/traces?format=jaeger.thrift"
+    restart: unless-stopped
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - ./config/static.yml:/etc/traefik/traefik.yml:ro
+      - ./config/dynamic.yml:/etc/traefik/dynamic.yml:ro
+      - ./certs:/etc/certs
     ports:
       - "80:80"
       - "8080:8080"
