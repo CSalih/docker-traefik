@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  traefik:
+    image: traefik:v2.6
+    container_name: traefik_proxy
+    restart: always
+    command:
+      - "--log.level=INFO"
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--tracing.jaeger=true"
+      - "--tracing.jaeger.samplingServerURL=http://jaeger:5778/sampling"
+      - "--tracing.jaeger.collector.endpoint=http://jaeger:14268/api/traces?format=jaeger.thrift"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    networks:
+      - net-traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.test`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
+      - "traefik.http.routers.dashboard.service=api@internal"
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.17
+    environment:
+      COLLECTOR_ZIPKIN_HTTP_PORT: 9411
+    networks:
+      - net-traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jaeger.rule=Host(`jaeger.test`)"
+      - "traefik.http.services.mailjaegerhog.loadbalancer.server.port=16686"
+
+networks:
+  net-traefik:
+    driver: bridge
