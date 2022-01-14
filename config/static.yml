@@ -28,5 +28,12 @@ log:
 entryPoints:
   http:
     address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: https
+          scheme: https
   https:
+    http:
+      tls: true
     address: ":443"

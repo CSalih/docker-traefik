@@ -12,13 +12,9 @@ services:
       - ./certs:/etc/certs
     ports:
       - "80:80"
-      - "8080:8080"
+      - "443:443"
     networks:
       - net-traefik
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.dashboard.rule=Host(`traefik.test`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
-      - "traefik.http.routers.dashboard.service=api@internal"
 
   jaeger:
     image: jaegertracing/all-in-one:1.17
@@ -28,7 +24,7 @@ services:
       - net-traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.jaeger.rule=Host(`jaeger.test`)"
+      - "traefik.http.routers.jaeger.rule=Host(`jaeger.docker.localhost`)"
       - "traefik.http.services.mailjaegerhog.loadbalancer.server.port=16686"
 
 networks:
